@@ -2,10 +2,7 @@
 
 ## Technical Details
 
-Tested for Python3.6, 3.7.
-
-Рекомендуется настроить виртуальное окружение. Вот "правильные" ссылки:
-Links for virtual env setting:
+Tested for Python3.6, 3.7. Links for virtual env setting:
 [https://docs.python.org/3/library/venv.html](https://docs.python.org/3/library/venv.html) и 
 [https://virtualenv.pypa.io/en/stable/userguide/](https://docs.python.org/3/library/venv.html)
 
