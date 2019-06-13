@@ -1,20 +1,38 @@
-from loguru import logger
 import argparse
 
+from loguru import logger
+from xlrd import open_workbook
 
-def get_excel_data(excel_filename: str):
+
+def get_excel_data(excel_filename: str, use_headers: bool = True):
     """
     Open excel file and exctract table.
     :param excel_filename:
+    :param use_headers:
     :return:
     """
     result = []
-    # TODO: read sheets here.
-    sheets = []
-    for sheet in sheets:
-        sheet_name = ''
+    xl_workbook = open_workbook(excel_filename)
+    sheet_names = xl_workbook.sheet_names()
+
+    for sheet_name in sheet_names:
+        xl_sheet = xl_workbook.sheet_by_name(sheet_name)
+        num_cols = xl_sheet.ncols
         headers = []
         data = []
+        start_row_idx = 0
+        if use_headers and xl_sheet.nrows:
+            start_row_idx = 1
+            for col_idx in range(0, num_cols):
+                cell_obj = xl_sheet.cell(0, col_idx)
+                headers.append(cell_obj.value)
+        for row_idx in range(start_row_idx, xl_sheet.nrows):
+            row_data = []
+            for col_idx in range(0, num_cols):
+                cell_obj = xl_sheet.cell(row_idx, col_idx)
+                row_data.append(cell_obj.value)
+            data.append(row_data)
+
         result.append(
             {
                 'sheetname': sheet_name,
@@ -34,18 +52,18 @@ def get_markdown_table(headers, data):
     :return: string with table in markdown format.
     """
     res = ''
-    # for header in headers:
+
     if headers:
-        res += '|' + '|'.join(headers) + '|\r\n'
+        res += '|' + '|'.join(headers) + '|\n'
         res += '|' + '|'.join(['-'] * len(headers)) + '|'
     elif data:
         max_col_count = len(max(data, key=len))
-        res += '|' + '|'.join([' '] * max_col_count) + '|\r\n'
+        res += '|' + '|'.join([' '] * max_col_count) + '|\n'
         res += '|' + '|'.join(['-'] * max_col_count) + '|'
     if not data:
         return res
     for rec in data:
-        res += '\r\n|' + '|'.join(map(str, rec)) + '|'
+        res += '\n|' + '|'.join(map(str, rec)) + '|'
 
     return res
 
@@ -53,7 +71,8 @@ def get_markdown_table(headers, data):
 def get_markdown_data(excel_data):
     """
     Convert data to markdown tables.
-    :param excel_data: List of dict in following format: [{'sheetname': 'Name of excel sheet', 'headers': [], 'data': []}]
+    :param excel_data: List of dict in following format:
+        [{'sheetname': 'Name of excel sheet', 'headers': [], 'data': []}]
     :return: dict with md sheet_name and md_table.
     """
     result = {}
@@ -76,12 +95,13 @@ def save_to_markdown_files(data):
     """
     Save data to md-files with table.
     :param data: Dict in following format: {sheet_name: md_data}.
-    :return:
+    :return: list with name of created files.
     """
     md_filenames = []
     for sheetname, md_data in data.items():
         md_filename = sheetname + '.md'
-        # TODO: write file here.
+        with open(md_filename, "w") as f:
+            f.write(md_data)
         md_filenames.append(md_filename)
     return md_filenames
 

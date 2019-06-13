@@ -3,6 +3,7 @@
 *.sqlite3
 
 env/*
+venv/*
 local_settings.py
 .env*
 build/*
