@@ -13,8 +13,3 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - pip install -r requirements.txt
           - python -m unittest discover tests/
-    - step:
-    name: Manual step
-    trigger: manual
-    script:
-      - echo "This step runs once you click the 'Run' button"
