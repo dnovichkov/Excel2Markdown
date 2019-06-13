@@ -34,7 +34,12 @@ def get_markdown_table(headers, data):
     :return:
     """
     # TODO: implement
-    return ''
+    res = '|'
+    # for header in headers:
+    res += '|'.join(headers) + '|\r\n'
+
+    res += '|' + '|'.join(['-'] * len(headers)) + '|'
+    return res
 
 
 def get_markdown_data(excel_data):
