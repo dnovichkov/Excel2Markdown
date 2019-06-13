@@ -29,16 +29,24 @@ def get_excel_data(excel_filename: str):
 def get_markdown_table(headers, data):
     """
     Create markdown table
-    :param headers:
-    :param data:
-    :return:
+    :param headers: List of table headers
+    :param data: List with table data: [[Row1Col1, Row1Col2], [Row2Col1, Row2Col2]]
+    :return: string with table in markdown format.
     """
-    # TODO: implement
-    res = '|'
+    res = ''
     # for header in headers:
-    res += '|'.join(headers) + '|\r\n'
+    if headers:
+        res += '|' + '|'.join(headers) + '|\r\n'
+        res += '|' + '|'.join(['-'] * len(headers)) + '|'
+    elif data:
+        max_col_count = len(max(data, key=len))
+        res += '|' + '|'.join([' '] * max_col_count) + '|\r\n'
+        res += '|' + '|'.join(['-'] * max_col_count) + '|'
+    if not data:
+        return res
+    for rec in data:
+        res += '\r\n|' + '|'.join(map(str, rec)) + '|'
 
-    res += '|' + '|'.join(['-'] * len(headers)) + '|'
     return res
 
 
