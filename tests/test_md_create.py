@@ -28,4 +28,5 @@ class TestMarkdownCreate(unittest.TestCase):
         ]
 
         result = get_markdown_table(None, data)
-        print(result)
+        expected_table = "| | |\r\n|-|-|\r\n|1|2|\r\n|3|4|"
+        self.assertEqual(result, expected_table)
