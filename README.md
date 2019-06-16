@@ -24,3 +24,6 @@ Run script
 ```
 python main.py ExcelTestFile.xlsx
 ```
+
+Run tests:
+`python -m unittest discover tests/`
