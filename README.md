@@ -2,8 +2,10 @@
 
 ## Technical Details
 
-Tested for Python3.6, 3.7. Links for virtual env setting:
-[https://docs.python.org/3/library/venv.html](https://docs.python.org/3/library/venv.html) и 
+Tested for Python3.6, 3.7. 
+
+Links for virtual env setting:
+[https://docs.python.org/3/library/venv.html](https://docs.python.org/3/library/venv.html) and 
 [https://virtualenv.pypa.io/en/stable/userguide/](https://docs.python.org/3/library/venv.html)
 
 For my Win-machine:
