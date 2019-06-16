@@ -1,5 +1,5 @@
 # Excel2Markdown
-
+[![Build Status](https://travis-ci.com/dnovichkov/Excel2Markdown.svg?branch=master)](https://travis-ci.com/dnovichkov/Excel2Markdown)
 ## Technical Details
 
 Tested for Python3.6, 3.7. 
