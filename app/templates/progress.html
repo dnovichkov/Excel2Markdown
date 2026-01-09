@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Converting... - Excel2Markdown{% endblock %}
+
+{% block meta_description %}Your file is being converted. Please wait...{% endblock %}
+
+{% block content %}
+<section class="progress-section">
+    <h1>Converting Your File</h1>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        <p class="progress-text" id="progress-text">Starting conversion...</p>
+        <p class="progress-detail" id="progress-detail"></p>
+    </div>
+
+    <div class="progress-status" id="progress-status">
+        <div class="spinner"></div>
+        <p>Please wait while we process your file.</p>
+    </div>
+
+    <div class="error-message" id="error-message" style="display: none;">
+        <h2>Conversion Failed</h2>
+        <p id="error-text"></p>
+        <a href="/" class="btn btn-primary">Try Again</a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const taskId = "{{ task_id }}";
+</script>
+<script src="/static/js/progress.js"></script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Conversion Complete - Excel2Markdown{% endblock %}
+
+{% block meta_description %}Your Excel file has been successfully converted.{% endblock %}
+
+{% block content %}
+<section class="result-section">
+    <h1>Conversion Complete</h1>
+
+    <div class="result-summary">
+        <p><strong>Original file:</strong> {{ result.original_filename }}</p>
+        <p><strong>Sheets converted:</strong> {{ result.total_sheets }}</p>
+    </div>
+
+    <div class="result-actions">
+        {% if result.has_zip %}
+        <a href="/api/v1/tasks/{{ task_id }}/download" class="btn btn-primary">
+            Download All (ZIP)
+        </a>
+        {% endif %}
+        <a href="/" class="btn btn-secondary">Convert Another File</a>
+    </div>
+
+    <div class="sheets-container">
+        {% for sheet_name, sheet_data in result.sheets.items() %}
+        <div class="sheet-card">
+            <div class="sheet-header">
+                <h2>{{ sheet_name }}</h2>
+                <div class="sheet-meta">
+                    {{ sheet_data.row_count }} rows, {{ sheet_data.column_count }} columns
+                </div>
+            </div>
+
+            <div class="sheet-tabs">
+                <button class="tab-btn active" data-tab="preview-{{ loop.index }}">Preview</button>
+                <button class="tab-btn" data-tab="raw-{{ loop.index }}">Raw</button>
+            </div>
+
+            <div class="tab-content active" id="preview-{{ loop.index }}">
+                <div class="preview-container">
+                    {{ sheet_data.content | safe }}
+                </div>
+            </div>
+
+            <div class="tab-content" id="raw-{{ loop.index }}">
+                <pre class="raw-content"><code>{{ sheet_data.content }}</code></pre>
+            </div>
+
+            <div class="sheet-actions">
+                <button class="btn btn-small btn-copy" data-content="{{ sheet_data.content | e }}">
+                    Copy to Clipboard
+                </button>
+                {% set ext = '.json' if result.sheets[sheet_name].content.startswith('[') or result.sheets[sheet_name].content.startswith('{') else '.md' %}
+                <a href="/api/v1/tasks/{{ task_id }}/download?file={{ sheet_name }}{{ ext }}" class="btn btn-small btn-secondary">
+                    Download
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var card = this.closest('.sheet-card');
+            var tabId = this.dataset.tab;
+
+            // Update active tab button
+            card.querySelectorAll('.tab-btn').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            this.classList.add('active');
+
+            // Update active tab content
+            card.querySelectorAll('.tab-content').forEach(function(content) {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Copy to clipboard
+    document.querySelectorAll('.btn-copy').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var content = this.dataset.content;
+            // Decode HTML entities
+            var textarea = document.createElement('textarea');
+            textarea.innerHTML = content;
+            content = textarea.value;
+
+            navigator.clipboard.writeText(content).then(function() {
+                btn.textContent = 'Copied!';
+                setTimeout(function() {
+                    btn.textContent = 'Copy to Clipboard';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy:', err);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

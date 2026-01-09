@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Excel to Markdown Converter - Free Online Tool{% endblock %}
+
+{% block meta_description %}Convert Excel spreadsheets (.xls, .xlsx) to Markdown tables or JSON format online. Free, fast, and secure. No registration required.{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Excel to Markdown Converter</h1>
+    <p class="hero-text">
+        Convert your Excel spreadsheets to Markdown tables or JSON format.
+        Simply upload your file and get the result instantly.
+    </p>
+</section>
+
+<section class="upload-section">
+    <form action="/convert" method="post" enctype="multipart/form-data" class="upload-form" id="upload-form">
+        <div class="drop-zone" id="drop-zone">
+            <div class="drop-zone-content">
+                <svg class="drop-zone-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <p class="drop-zone-text">Drag and drop your Excel file here</p>
+                <p class="drop-zone-hint">or click to browse</p>
+                <input type="file" name="file" id="file-input" accept=".xls,.xlsx" class="file-input" required>
+            </div>
+            <div class="file-info" id="file-info" style="display: none;">
+                <span class="file-name" id="file-name"></span>
+                <button type="button" class="file-remove" id="file-remove">Remove</button>
+            </div>
+        </div>
+
+        <div class="form-options">
+            <div class="option-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="use_headers" checked>
+                    <span class="checkbox-text">First row contains headers</span>
+                </label>
+            </div>
+
+            <div class="option-group">
+                <label class="option-label">Output format:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="output_format" value="markdown" checked>
+                        <span class="radio-text">Markdown</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="output_format" value="json">
+                        <span class="radio-text">JSON</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-large" id="submit-btn" disabled>
+            Convert File
+        </button>
+    </form>
+
+    <div class="upload-info">
+        <p><strong>Supported formats:</strong> {{ allowed_extensions | join(', ') }}</p>
+        <p><strong>Maximum file size:</strong> {{ max_file_size_mb }}MB</p>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Features</h2>
+    <div class="features-grid">
+        <div class="feature">
+            <h3>Multiple Sheets</h3>
+            <p>Convert all sheets from your Excel file at once. Download individually or as a ZIP archive.</p>
+        </div>
+        <div class="feature">
+            <h3>Markdown Tables</h3>
+            <p>Generate clean Markdown tables compatible with GitHub, GitLab, and other platforms.</p>
+        </div>
+        <div class="feature">
+            <h3>JSON Export</h3>
+            <p>Export your data as structured JSON for easy integration with applications and APIs.</p>
+        </div>
+        <div class="feature">
+            <h3>Secure Processing</h3>
+            <p>Your files are processed securely and automatically deleted after 7 days.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/upload.js"></script>
+{% endblock %}

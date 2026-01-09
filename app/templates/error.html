@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Excel2Markdown{% endblock %}
+
+{% block meta_description %}An error occurred during file conversion.{% endblock %}
+
+{% block content %}
+<section class="error-section">
+    <div class="error-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+    </div>
+
+    <h1>Conversion Error</h1>
+
+    <div class="error-details">
+        <p class="error-message">{{ error }}</p>
+        {% if error_type %}
+        <p class="error-type">Error type: {{ error_type }}</p>
+        {% endif %}
+    </div>
+
+    <div class="error-suggestions">
+        <h2>Possible solutions:</h2>
+        <ul>
+            <li>Make sure your file is a valid Excel file (.xls or .xlsx)</li>
+            <li>Check that your file is not corrupted</li>
+            <li>Ensure your file is under the size limit</li>
+            <li>Try re-saving your Excel file and uploading again</li>
+        </ul>
+    </div>
+
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary">Try Again</a>
+    </div>
+</section>
+{% endblock %}

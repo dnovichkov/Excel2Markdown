@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Excel2Markdown">
+    <title>{% block title %}Excel2Markdown{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Free online tool to convert Excel files (.xls, .xlsx) to Markdown tables or JSON format. No registration required.{% endblock %}">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">Excel2Markdown</a>
+            <nav class="nav">
+                <a href="/">Convert</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Excel2Markdown - Free Excel to Markdown/JSON Converter</p>
+            <p class="footer-note">Your files are processed securely and automatically deleted after 7 days.</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

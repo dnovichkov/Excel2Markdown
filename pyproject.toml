@@ -1,0 +1,22 @@
+[project]
+name = "excel2markdown"
+version = "1.0.0"
+description = "Web service for converting Excel files to Markdown or JSON"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v"
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/__init__.py", "*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]

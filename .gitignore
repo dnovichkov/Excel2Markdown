@@ -1,12 +1,50 @@
-.idea
-*.pyc
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Storage (uploaded and converted files)
+storage/uploads/
+storage/results/
+
+# Logs
+*.log
+log_*.log
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Database
 *.sqlite3
 
-env/*
-venv/*
+# Local settings
 local_settings.py
-.env*
-build/*
-dist/*
+
+# Output files
 *_result.json
-log_.log
+*.md.bak

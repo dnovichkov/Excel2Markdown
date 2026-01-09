@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.app
+    volumes:
+      - storage_data:/app/storage
+      - static_files:/app/app/static
+    environment:
+      - DEBUG=false
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - excel2md
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.celery
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2
+    volumes:
+      - storage_data:/app/storage
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - excel2md
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.celery
+    command: celery -A app.celery_app beat --loglevel=info
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - excel2md
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - excel2md
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - static_files:/app/static:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - excel2md
+
+networks:
+  excel2md:
+    driver: bridge
+
+volumes:
+  storage_data:
+  redis_data:
+  static_files:
