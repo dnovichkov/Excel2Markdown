@@ -1,0 +1,104 @@
+version: '3.8'
+
+# Production docker-compose configuration
+# Usage:
+#   1. Copy .env.prod.example to .env
+#   2. Update DOMAIN and other settings in .env
+#   3. Run: docker-compose -f docker-compose.prod.yml up -d
+
+services:
+  app:
+    image: ghcr.io/${GITHUB_REPOSITORY}/app:latest
+    volumes:
+      - storage_data:/app/storage
+      - static_files:/app/app/static
+    environment:
+      - DEBUG=false
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: always
+    networks:
+      - excel2md
+
+  celery-worker:
+    image: ghcr.io/${GITHUB_REPOSITORY}/celery:latest
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2
+    volumes:
+      - storage_data:/app/storage
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: always
+    networks:
+      - excel2md
+
+  celery-beat:
+    image: ghcr.io/${GITHUB_REPOSITORY}/celery:latest
+    command: celery -A app.celery_app beat --loglevel=info
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: always
+    networks:
+      - excel2md
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - excel2md
+
+  nginx:
+    image: ghcr.io/${GITHUB_REPOSITORY}/nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - static_files:/app/static:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - app
+    restart: always
+    networks:
+      - excel2md
+
+  # Certbot for SSL certificate renewal
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: always
+
+networks:
+  excel2md:
+    driver: bridge
+
+volumes:
+  storage_data:
+  redis_data:
+  static_files:
+  certbot_conf:
+  certbot_www:

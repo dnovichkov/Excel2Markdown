@@ -120,3 +120,19 @@ Environment variables (see `.env.example`):
 **Dev:**
 - pytest, pytest-cov - Testing
 - httpx - HTTP client for tests
+
+## CI/CD
+
+**GitHub Actions** (`.github/workflows/build.yml`):
+- Runs tests on push/PR
+- Builds Docker images on push to master
+- Pushes to GitHub Container Registry (ghcr.io)
+
+**Production deployment:**
+```bash
+# On server: pull and restart
+docker-compose -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+See `DEPLOY.md` for full deployment guide including SSL setup with Let's Encrypt.
