@@ -39,7 +39,7 @@
 
             <div class="tab-content active" id="preview-{{ loop.index }}">
                 <div class="preview-container">
-                    {{ sheet_data.content | safe }}
+                    <div class="markdown-content" data-markdown="{{ sheet_data.content | e }}"></div>
                 </div>
             </div>
 
@@ -63,8 +63,22 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Render markdown previews with DOMPurify sanitization for XSS protection
+    document.querySelectorAll('.markdown-content').forEach(function(el) {
+        var md = el.dataset.markdown;
+        // Decode HTML entities
+        var textarea = document.createElement('textarea');
+        textarea.innerHTML = md;
+        md = textarea.value;
+        // Render markdown to HTML and sanitize with DOMPurify
+        var html = marked.parse(md);
+        el.innerHTML = DOMPurify.sanitize(html);
+    });
+
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
