@@ -74,7 +74,7 @@ services:
       dockerfile: docker/nginx/Dockerfile
     container_name: excel2md-nginx
     ports:
-      - "3002:80"
+      - "127.0.0.1:3002:80"
     volumes:
       - static_files:/app/static:ro
     depends_on:
